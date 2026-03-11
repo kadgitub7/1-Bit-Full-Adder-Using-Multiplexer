@@ -8,6 +8,9 @@ module fullAdderMultiplexer(
     output Co
     );
     
+    wire I0S, I1S, I2S, I3S;
+    wire I0Co, I1Co, I2Co, I3Co;
+    
     assign I0S = Cin;
     assign I1S = ~Cin;
     assign I2S = ~Cin;
