@@ -1,6 +1,6 @@
-## 1-Bit Full Adder Using 4×1 Multiplexers | Verilog
+## 1-Bit Full Adder Using 4x1 Multiplexers | Verilog
 
-A **Verilog implementation of a 1-bit full adder using 4×1 multiplexer (MUX) blocks**, designed and simulated in **Xilinx Vivado**.  
+A **Verilog implementation of a 1-bit full adder using 4x1 multiplexer (MUX) blocks**, designed and simulated in **Xilinx Vivado**.  
 This document explains:
 
 - **What a full adder is**
@@ -15,7 +15,7 @@ The project includes the **RTL design**, **testbench**, **simulation waveform**,
 ## Table of Contents
 
 - [What Is a Full Adder?](#what-is-a-full-adder)
-- [4×1 Multiplexer Basics](#4×1-multiplexer-basics)
+- [4x1 Multiplexer Basics](#4x1-multiplexer-basics)
 - [1-Bit Full Adder Truth Table](#1-bit-full-adder-truth-table)
 - [K‑Map Derivation and MUX Input Mapping](#k-map-derivation-and-mux-input-mapping)
   - [Sum Output \(S\) Using a 4×1 MUX](#sum-output-s-using-a-4×1-mux)
@@ -31,53 +31,53 @@ The project includes the **RTL design**, **testbench**, **simulation waveform**,
 
 ## What Is a Full Adder?
 
-A **1-bit full adder** is a combinational logic circuit that adds **three 1‑bit binary inputs**:
+A **1-bit full adder** is a combinational logic circuit that adds **three 1-bit binary inputs**:
 
 - **A** – first operand bit  
 - **B** – second operand bit  
-- **C\_i** – input carry (carry‑in)
+- **Ci** – input carry (carry-in)
 
 It produces **two outputs**:
 
 - **S** – sum bit  
-- **C\_o** – carry‑out bit
+- **Co** – carry-out bit
 
 Conceptually, it performs:
 
-\[
-A + B + C\_i = C\_o\,S
-\]
+The operation can be written as:
 
-where \(S\) is the least significant bit of the sum and \(C\_o\) is the carry to the next higher bit.
+```text
+A + B + Ci = Co S
+```
+
+where `S` is the least significant bit of the sum and `Co` is the carry to the next higher bit.
 
 ---
 
-## 4×1 Multiplexer Basics
+A **4x1 multiplexer** has:
 
-A **4×1 multiplexer** has:
+- **Inputs**: `I0, I1, I2, I3`  
+- **Select lines**: `S1, S0`  
+- **Output**: `Y`
 
-- **Inputs**: \(I_0, I_1, I_2, I_3\)  
-- **Select lines**: \(S_1, S_0\)  
-- **Output**: \(Y\)
+The select lines form a **2-bit binary number** that chooses exactly **one input** to be routed to the output:
 
-The select lines form a **2‑bit binary number** that chooses exactly **one input** to be routed to the output:
-
-| S1 | S0 | Selected Input | Output        |
-|----|----|----------------|---------------|
-| 0  | 0  | \(I_0\)        | \(Y = I_0\)   |
-| 0  | 1  | \(I_1\)        | \(Y = I_1\)   |
-| 1  | 0  | \(I_2\)        | \(Y = I_2\)   |
-| 1  | 1  | \(I_3\)        | \(Y = I_3\)   |
+| S1 | S0 | Selected Input | Output     |
+|----|----|----------------|------------|
+| 0  | 0  | `I0`           | `Y = I0`   |
+| 0  | 1  | `I1`           | `Y = I1`   |
+| 1  | 0  | `I2`           | `Y = I2`   |
+| 1  | 1  | `I3`           | `Y = I3`   |
 
 In this project, we use:
 
-- **Two 4×1 MUXes in parallel**
-  - One MUX generates the **sum \(S\)**
-  - One MUX generates the **carry \(C\_o\)**
+- **Two 4x1 MUXes in parallel**
+  - One MUX generates the **sum `S`**
+  - One MUX generates the **carry `Co`**
 - The **same select lines** for both:
-  - **\(S_0 = B\)**
-  - **\(S_1 = A\)**
-- The third input **\(C\_i\)** is used inside each MUX as part of the data inputs \(I_0\ldots I_3\).
+  - **S0 = B**
+  - **S1 = A**
+- The third input **Ci** is used inside each MUX as part of the data inputs `I0...I3`.
 
 ---
 
@@ -85,7 +85,7 @@ In this project, we use:
 
 The complete truth table for the 1‑bit full adder is:
 
-| A | B | C\_i | S | C\_o |
+| A | B | Ci | S | Co |
 |---|---|------|---|------|
 | 0 | 0 | 0    | 0 | 0    |
 | 0 | 0 | 1    | 1 | 0    |
@@ -96,14 +96,12 @@ The complete truth table for the 1‑bit full adder is:
 | 1 | 1 | 0    | 0 | 1    |
 | 1 | 1 | 1    | 1 | 1    |
 
-From this table, the well‑known Boolean expressions are:
+From this table, the well-known Boolean expressions are:
 
-\[
-S = A \oplus B \oplus C\_i
-\]
-\[
-C\_o = AB + BC\_i + AC\_i
-\]
+```text
+S  = A ⊕ B ⊕ Ci
+Co = A·B + B·Ci + A·Ci
+```
 
 In this implementation, we do **not** realize these expressions directly with gates; instead, we **realize both outputs using 4×1 multiplexers**.
 
@@ -111,7 +109,7 @@ In this implementation, we do **not** realize these expressions directly with ga
 
 ## K‑Map Derivation and MUX Input Mapping
 
-To implement a function with a 4×1 MUX:
+To implement a function with a 4x1 MUX:
 
 - Choose **two variables as select lines**.
 - Use the **third variable** within the input assignments \(I_0\ldots I_3\).
@@ -119,75 +117,75 @@ To implement a function with a 4×1 MUX:
 Here we choose:
 
 - **Selector mapping**:
-  - **\(S_1 = A\)**
-  - **\(S_0 = B\)**
+  - **S1 = A**
+  - **S0 = B**
 - **Remaining variable**:
-  - **\(C\_i\)** is used inside the input functions.
+  - **Ci** is used inside the input functions.
 
 So each MUX will have a truth table of the form:
 
-| S1 (A) | S0 (B) | Selected Input | Output |
-|--------|--------|----------------|--------|
-| 0      | 0      | \(I_0\)        | \(f(A=0,B=0,C\_i)\) |
-| 0      | 1      | \(I_1\)        | \(f(A=0,B=1,C\_i)\) |
-| 1      | 0      | \(I_2\)        | \(f(A=1,B=0,C\_i)\) |
-| 1      | 1      | \(I_3\)        | \(f(A=1,B=1,C\_i)\) |
+| S1 (A) | S0 (B) | Selected Input | Output          |
+|--------|--------|----------------|-----------------|
+| 0      | 0      | `I0`           | `f(A=0,B=0,Ci)` |
+| 0      | 1      | `I1`           | `f(A=0,B=1,Ci)` |
+| 1      | 0      | `I2`           | `f(A=1,B=0,Ci)` |
+| 1      | 1      | `I3`           | `f(A=1,B=1,Ci)` |
 
 We now derive \(I_0\ldots I_3\) for **S** and **C\_o** separately using K‑maps.
 
-### Sum Output \(S\) Using a 4×1 MUX
+### Sum Output `S` Using a 4x1 MUX
 
-K‑map for **sum \(S\)** with **rows = A**, **columns = (B, C\_i)**:
+K-map for **sum S** with **rows = A**, **columns = (B, Ci)**:
 
-| A \\ B,C\_i | 00 | 01 | 11 | 10 |
+| A \\ B,Ci | 00 | 01 | 11 | 10 |
 |------------|----|----|----|----|
 | 0          | 0  | 1  | 0  | 1  |
 | 1          | 1  | 0  | 1  | 0  |
 
-Grouping by \((A,B)\) and examining dependence on \(C\_i\), we obtain the MUX input assignments:
+Grouping by `(A,B)` and examining dependence on `Ci`, we obtain the MUX input assignments:
 
-| S1 (A) | S0 (B) | S | MUX Input Definition |
-|--------|--------|---|----------------------|
-| 0      | 0      | \(S = C\_i\)   | \(I_0 = C\_i\)   |
-| 0      | 1      | \(S = \overline{C\_i}\) | \(I_1 = \overline{C\_i}\) |
-| 1      | 0      | \(S = \overline{C\_i}\) | \(I_2 = \overline{C\_i}\) |
-| 1      | 1      | \(S = C\_i\)   | \(I_3 = C\_i\)   |
+| S1 (A) | S0 (B) | S           | MUX Input Definition |
+|--------|--------|-------------|----------------------|
+| 0      | 0      | S = Ci      | `I0 = Ci`           |
+| 0      | 1      | S = ~Ci     | `I1 = ~Ci`          |
+| 1      | 0      | S = ~Ci     | `I2 = ~Ci`          |
+| 1      | 1      | S = Ci      | `I3 = Ci`           |
 
 So the **sum MUX** has:
 
-- **\(I_0 = C\_i\)**
-- **\(I_1 = \overline{C\_i}\)**
-- **\(I_2 = \overline{C\_i}\)**
-- **\(I_3 = C\_i\)**
+- `I0 = Ci`
+- `I1 = ~Ci`
+- `I2 = ~Ci`
+- `I3 = Ci`
 
-with **\(S_1 = A\)** and **\(S_0 = B\)**.
+with **S1 = A** and **S0 = B**.
 
-### Carry Output \(C\_o\) Using a 4×1 MUX
+### Carry Output `Co` Using a 4x1 MUX
 
-K‑map for **carry \(C\_o\)** with **rows = A**, **columns = (B, C\_i)**:
+K-map for **carry Co** with **rows = A**, **columns = (B, Ci)**:
 
-| A \\ B,C\_i | 00 | 01 | 11 | 10 |
+| A \\ B,Ci | 00 | 01 | 11 | 10 |
 |------------|----|----|----|----|
 | 0          | 0  | 0  | 1  | 0  |
 | 1          | 0  | 1  | 1  | 1  |
 
-From this map, for each \((A,B)\) pair, we derive dependence on \(C\_i\):
+From this map, for each `(A,B)` pair, we derive dependence on `Ci`:
 
-| S1 (A) | S0 (B) | C\_o | MUX Input Definition |
-|--------|--------|------|----------------------|
-| 0      | 0      | 0          | \(I_0 = 0\)   |
-| 0      | 1      | \(C\_o = C\_i\)      | \(I_1 = C\_i\) |
-| 1      | 0      | \(C\_o = C\_i\)      | \(I_2 = C\_i\) |
-| 1      | 1      | 1          | \(I_3 = 1\)   |
+| S1 (A) | S0 (B) | Co          | MUX Input Definition |
+|--------|--------|-------------|----------------------|
+| 0      | 0      | Co = 0      | `I0 = 0`            |
+| 0      | 1      | Co = Ci     | `I1 = Ci`           |
+| 1      | 0      | Co = Ci     | `I2 = Ci`           |
+| 1      | 1      | Co = 1      | `I3 = 1`            |
 
 So the **carry MUX** has:
 
-- **\(I_0 = 0\)**
-- **\(I_1 = C\_i\)**
-- **\(I_2 = C\_i\)**
-- **\(I_3 = 1\)**
+- `I0 = 0`
+- `I1 = Ci`
+- `I2 = Ci`
+- `I3 = 1`
 
-again with **\(S_1 = A\)** and **\(S_0 = B\)**.
+again with **S1 = A** and **S0 = B**.
 
 ---
 
@@ -196,39 +194,39 @@ again with **\(S_1 = A\)** and **\(S_0 = B\)**.
 Using the mappings above, the full adder is implemented with:
 
 - **MUX 1 (Sum MUX)**  
-  - Select lines: **\(S_1 = A\)**, **\(S_0 = B\)**  
+  - Select lines: **S1 = A**, **S0 = B**  
   - Data inputs:
-    - \(I_0 = C\_i\)
-    - \(I_1 = \overline{C\_i}\)
-    - \(I_2 = \overline{C\_i}\)
-    - \(I_3 = C\_i\)
-  - Output: **\(S\)**
+    - `I0 = Ci`
+    - `I1 = ~Ci`
+    - `I2 = ~Ci`
+    - `I3 = Ci`
+  - Output: **S**
 
 - **MUX 2 (Carry MUX)**  
-  - Select lines: **\(S_1 = A\)**, **\(S_0 = B\)**  
+  - Select lines: **S1 = A**, **S0 = B**  
   - Data inputs:
-    - \(I_0 = 0\)
-    - \(I_1 = C\_i\)
-    - \(I_2 = C\_i\)
-    - \(I_3 = 1\)
-  - Output: **\(C\_o\)**
+    - `I0 = 0`
+    - `I1 = Ci`
+    - `I2 = Ci`
+    - `I3 = 1`
+  - Output: **Co**
 
-These two MUXes run **in parallel** and share the same select lines, so for each combination of \(A\) and \(B\), both **S** and **\(C\_o\)** are produced simultaneously using appropriate functions of \(C\_i\).
+These two MUXes run **in parallel** and share the same select lines, so for each combination of `A` and `B`, both **S** and **Co** are produced simultaneously using appropriate functions of `Ci`.
 
 A compact view of the overall behavior is:
 
-| A | B | C\_i | Selected Inputs | S (from Sum MUX) | C\_o (from Carry MUX) |
-|---|---|------|-----------------|------------------|------------------------|
-| 0 | 0 | 0    | \(I_0\)         | \(C\_i = 0\)     | 0                      |
-| 0 | 0 | 1    | \(I_0\)         | \(C\_i = 1\)     | 0                      |
-| 0 | 1 | 0    | \(I_1\)         | \(\overline{C\_i} = 1\) | 0              |
-| 0 | 1 | 1    | \(I_1\)         | \(\overline{C\_i} = 0\) | 1              |
-| 1 | 0 | 0    | \(I_2\)         | \(\overline{C\_i} = 1\) | 0              |
-| 1 | 0 | 1    | \(I_2\)         | \(\overline{C\_i} = 0\) | 1              |
-| 1 | 1 | 0    | \(I_3\)         | \(C\_i = 0\)     | 1                      |
-| 1 | 1 | 1    | \(I_3\)         | \(C\_i = 1\)     | 1                      |
+| A | B | Ci | Selected Inputs | S (from Sum MUX) | Co (from Carry MUX) |
+|---|---|----|-----------------|------------------|----------------------|
+| 0 | 0 | 0  | I0              | Ci = 0           | 0                    |
+| 0 | 0 | 1  | I0              | Ci = 1           | 0                    |
+| 0 | 1 | 0  | I1              | ~Ci = 1          | 0                    |
+| 0 | 1 | 1  | I1              | ~Ci = 0          | 1                    |
+| 1 | 0 | 0  | I2              | ~Ci = 1          | 0                    |
+| 1 | 0 | 1  | I2              | ~Ci = 0          | 1                    |
+| 1 | 1 | 0  | I3              | Ci = 0           | 1                    |
+| 1 | 1 | 1  | I3              | Ci = 1           | 1                    |
 
-which matches the standard full‑adder truth table.
+which matches the standard full-adder truth table.
 
 ---
 
@@ -236,25 +234,26 @@ which matches the standard full‑adder truth table.
 
 The circuit consists of:
 
-- Two **4×1 multiplexers**:
-  - One for **sum \(S\)**
-  - One for **carry \(C\_o\)**
+- Two **4x1 multiplexers**:
+  - One for **sum S**
+  - One for **carry Co**
 - Common select lines **A** and **B**
-- Shared input **\(C\_i\)** driving the internal MUX data inputs
+- Shared input **Ci** driving the internal MUX data inputs
 
 ASCII view:
 
 ```text
         A (S1)          B (S0)
-         │               │
-      ┌──┴──┐         ┌──┴──┐
-      │    S│         │   Cₒ│
-      │ 4×1 │         │ 4×1 │
-      │ MUX │         │ MUX │
-      └┬────┘         └┬────┘
-       │ I0..I3        │ I0..I3
-       │               │
-      Cᵢ, 0, 1 and Cᵢ̄ (as per mappings)
+         |               |
+      +--+--+         +--+--+
+      |     |         |     |
+      | 4x1 |         | 4x1 |
+      | MUX |         | MUX |
+      |  S  |         | Co  |
+      +--+--+         +--+--+
+         | I0..I3        | I0..I3
+         |               |
+       Ci, 0, 1 and ~Ci  (as per mappings)
 ```
 
 Rendered schematic from Vivado:
@@ -267,16 +266,16 @@ Rendered schematic from Vivado:
 
 The behavioral simulation verifies operation by:
 
-1. Sweeping through **all 8 combinations** of inputs \(A, B, C\_i\).  
-2. Observing that the outputs \(S\) and \(C\_o\) match the full‑adder truth table for each case.
+1. Sweeping through **all 8 combinations** of inputs `A, B, Ci`.  
+2. Observing that the outputs `S` and `Co` match the full-adder truth table for each case.
 
 Signals observed:
 
 ```text
 Inputs :
-  A, B, C_i
+  A, B, Ci
 Outputs:
-  S, C_o
+  S, Co
 ```
 
 Simulation waveform:
@@ -290,19 +289,19 @@ Simulation waveform:
 Conceptual console-style view of the testbench results:
 
 ```text
-A B C_in | S C_o
+A B Cin | S Co
 ----------------
-0 0  0   | 0 0
-0 0  1   | 1 0
-0 1  0   | 1 0
-0 1  1   | 0 1
-1 0  0   | 1 0
-1 0  1   | 0 1
-1 1  0   | 0 1
-1 1  1   | 1 1
+0 0  0  | 0 0
+0 0  1  | 1 0
+0 1  0  | 1 0
+0 1  1  | 0 1
+1 0  0  | 1 0
+1 0  1  | 0 1
+1 1  0  | 0 1
+1 1  1  | 1 1
 ```
 
-These results confirm that **\(S\)** and **\(C\_o\)** match the expected full‑adder behavior for all possible input combinations.
+These results confirm that **S** and **Co** match the expected full-adder behavior for all possible input combinations.
 
 ---
 
@@ -340,14 +339,14 @@ Set `fullAdderMultiplexer_tb.v` as the **simulation top module**.
 In Vivado:
 
 ```text
-Flow → Run Simulation → Run Behavioral Simulation
+Flow -> Run Simulation -> Run Behavioral Simulation
 ```
 
 Observe the signals:
 
 ```text
-Inputs : A, B, C_i
-Outputs: S, C_o
+Inputs : A, B, Ci
+Outputs: S, Co
 ```
 
 Verify from the waveform that the outputs follow the **truth table** and match the console-style output listed above.
@@ -358,8 +357,8 @@ Verify from the waveform that the outputs follow the **truth table** and match t
 
 | File                         | Description                                                     |
 |------------------------------|-----------------------------------------------------------------|
-| `fourToOneMultiplexer.v`     | 4×1 multiplexer module used as the basic building block        |
-| `fullAdderMultiplexer.v`     | 1-bit full adder implemented using two 4×1 MUX modules         |
+| `fourToOneMultiplexer.v`     | 4x1 multiplexer module used as the basic building block        |
+| `fullAdderMultiplexer.v`     | 1-bit full adder implemented using two 4x1 MUX modules         |
 | `fullAdderMultiplexer_tb.v`  | Testbench that stimulates the full adder and records waveforms |
 
 ---
